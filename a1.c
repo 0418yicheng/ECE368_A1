@@ -181,6 +181,7 @@ void processOutput(TreeNode* head){
                 LinkedList* children = node->children; //<-- TODO: Sort this linked list
                 if(children == NULL){
                     push(q, POUND, NULL);
+                    push(q, SPACE, NULL);
                     break;
                 }
 
