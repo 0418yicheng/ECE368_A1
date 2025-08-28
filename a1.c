@@ -168,23 +168,27 @@ void processOutput(TreeNode* head){
     Queue* q = initQueue();
     
     push(q, NODE, head);
+    push(q, NEWLINE, NULL);
     while(q->list != NULL){
-        printf("H");
+        // printf("H\n");
+        TreeNode* node = q->list->node;
         Action a = pull(q);
         switch(a){
             case NODE:
-                printf("%c", q->list->node->name);
+                printf("%c", node->name);
 
-                // LinkedList* children = q->list->node->children; //<-- TODO: Sort this linked list
-                // if(children == NULL){
-                //     push(q, POUND, NULL);
-                // }
+                LinkedList* children = node->children; //<-- TODO: Sort this linked list
+                if(children == NULL){
+                    push(q, POUND, NULL);
+                    break;
+                }
 
-                // while(children != NULL){
-                //     push(q, NODE, children->node);
-                //     children = children->next;
-                // }
-                // push(q, SPACE, NULL);
+                while(children != NULL){
+                    push(q, NODE, children->node);
+                    push(q, SPACE, NULL);
+                    children = children->next;
+                }
+                push(q, NEWLINE, NULL);
                 break;
             case POUND:
                 printf("#");
@@ -204,3 +208,52 @@ void processOutput(TreeNode* head){
 void freeTree(TreeNode* head){
 
 }
+
+// Queue* initQueue(){
+//     Queue* q = malloc(sizeof(Queue));
+
+//     q->list = NULL;
+
+//     return q;
+// }
+
+// Action pop(Queue* q){
+//     Action result = q->list->a;
+
+//     return result;
+// }
+
+// Action pull(Queue* q){
+//     Action result = q->list->a;
+
+//     QueueList* prev = q->list;
+//     q->list = q->list->next;
+
+//     free(prev);
+
+//     return result;
+// }
+
+// QueueList* push(Queue* q, Action a, TreeNode* n){
+//     if(q->list == NULL){
+//         q->list = malloc(sizeof(QueueList));
+
+//         q->list->a = a;
+//         q->list->node = n;
+//         q->list->next = NULL;
+//         return q->list;
+//     }
+
+//     QueueList* list = q->list;
+
+//     while(list->next != NULL){
+//         list = list->next;
+//     }
+
+//     list->next = malloc(sizeof(QueueList));
+//     list->next->a = a;
+//     list->next->node = n;
+//     list->next->next = NULL;
+
+//     return list->next;
+// }

@@ -31,7 +31,10 @@ Action pop(Queue* q){
 Action pull(Queue* q){
     Action result = q->list->a;
 
-    q->list = q->list->next;    //Check if this actually does what I want or if it's limited to the function
+    QueueList* prev = q->list;
+    q->list = q->list->next;
+
+    free(prev);
 
     return result;
 }
