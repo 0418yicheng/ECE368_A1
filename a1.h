@@ -16,10 +16,6 @@ typedef struct TreeNode {
 
 } TreeNode;
 
-typedef struct Queue{
-
-} Queue;
-
 LinkedList* createTree(FILE*, LinkedList*);
 TreeNode* createNode(char);
 LinkedList* addList(LinkedList*, TreeNode*);

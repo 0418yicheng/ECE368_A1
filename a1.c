@@ -1,5 +1,5 @@
 #include "a1.h"
-
+#include "Queue.c"
 int main(int argc, char** argv){
     if(argc < 2){
         printf("Not enough arguments\n");
@@ -18,9 +18,8 @@ int main(int argc, char** argv){
 
 
     TreeNode* head = findHead(nodes);
-    printf("The head is %c\n", head->name);
 
-    // processOutput(head);
+    processOutput(head);
 
     // freeTree(head);
 
@@ -126,10 +125,10 @@ TreeNode* findHead(LinkedList* nodes){
     TreeNode* head = nodes->node;
 
     while(nodes != NULL){
-        printf("Checking %c...\n", nodes->node->name);
+        // printf("Checking %c...\n", nodes->node->name);
         // Skip the current iteration if we've already seen it. It cannot be the head
         if(contains(visited, nodes->node)){
-            printf("Skipping %c\n", nodes->node->name);
+            // printf("Skipping %c\n", nodes->node->name);
             nodes = nodes->next;
             continue;
         } 
@@ -166,8 +165,40 @@ bool contains(LinkedList* visited, TreeNode* node){
 
 void processOutput(TreeNode* head){
     printf("%c\n", head->name);
-
+    Queue* q = initQueue();
     
+    push(q, NODE, head);
+    while(q->list != NULL){
+        printf("H");
+        Action a = pull(q);
+        switch(a){
+            case NODE:
+                printf("%c", q->list->node->name);
+
+                // LinkedList* children = q->list->node->children; //<-- TODO: Sort this linked list
+                // if(children == NULL){
+                //     push(q, POUND, NULL);
+                // }
+
+                // while(children != NULL){
+                //     push(q, NODE, children->node);
+                //     children = children->next;
+                // }
+                // push(q, SPACE, NULL);
+                break;
+            case POUND:
+                printf("#");
+                break;
+            case SPACE:
+                printf(" ");
+                break;
+            case NEWLINE:
+                printf("\n");
+                break;
+        }
+        // push(q, NEWLINE, NULL);
+    }
+
 }
 
 void freeTree(TreeNode* head){
