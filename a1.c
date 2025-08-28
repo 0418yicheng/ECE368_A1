@@ -176,6 +176,7 @@ void processOutput(TreeNode* head){
         switch(a){
             case NODE:
                 printf("%c", node->name);
+                childrenInLayer--;
 
                 LinkedList* children = node->children; //<-- TODO: Sort this linked list
                 if(children == NULL){
@@ -189,7 +190,6 @@ void processOutput(TreeNode* head){
                     childrenInNextLayer++;
                 }
 
-                childrenInLayer--;
                 if(childrenInLayer == 0){
                     childrenInLayer = childrenInNextLayer;
                     childrenInNextLayer = 0;
@@ -207,9 +207,7 @@ void processOutput(TreeNode* head){
                 printf("\n");
                 break;
         }
-        // push(q, NEWLINE, NULL);
     }
-
 }
 
 void freeTree(TreeNode* head){
