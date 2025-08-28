@@ -21,7 +21,7 @@ TreeNode* createNode(char);
 LinkedList* addList(LinkedList*, TreeNode*);
 TreeNode* findHead(LinkedList*);
 bool contains(LinkedList*, TreeNode*);
-void processOutput(TreeNode*);
+void processOutput(TreeNode*, char*);
 void freeTree(TreeNode*);
 
 #endif
