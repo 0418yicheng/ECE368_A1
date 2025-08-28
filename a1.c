@@ -164,13 +164,13 @@ bool contains(LinkedList* visited, TreeNode* node){
 }
 
 void processOutput(TreeNode* head){
-    printf("%c\n", head->name);
     Queue* q = initQueue();
     
     push(q, NODE, head);
     push(q, NEWLINE, NULL);
+    int childrenInLayer = 1;
+    int childrenInNextLayer = 0;
     while(q->list != NULL){
-        // printf("H\n");
         TreeNode* node = q->list->node;
         Action a = pull(q);
         switch(a){
@@ -185,10 +185,17 @@ void processOutput(TreeNode* head){
 
                 while(children != NULL){
                     push(q, NODE, children->node);
-                    push(q, SPACE, NULL);
                     children = children->next;
+                    childrenInNextLayer++;
                 }
-                push(q, NEWLINE, NULL);
+
+                childrenInLayer--;
+                if(childrenInLayer == 0){
+                    childrenInLayer = childrenInNextLayer;
+                    childrenInNextLayer = 0;
+                    push(q, NEWLINE, NULL);
+                } 
+                else push(q, SPACE, NULL);
                 break;
             case POUND:
                 printf("#");
