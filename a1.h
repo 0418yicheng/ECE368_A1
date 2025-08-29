@@ -23,5 +23,7 @@ TreeNode* findHead(LinkedList*);
 bool contains(LinkedList*, TreeNode*);
 void processOutput(TreeNode*, char*);
 void freeTree(TreeNode*);
+void freeTreeUtil(TreeNode*);
+void freeListUtil(LinkedList*);
 
 #endif

@@ -210,9 +210,35 @@ void processOutput(TreeNode* head, char* filename){
                 break;
         }
     }
+    fprintf(outputFile, "\n");
     fclose(outputFile);
 }
 
 void freeTree(TreeNode* head){
+    freeTreeUtil(head);
+}
 
+void freeTreeUtil(TreeNode* head){
+    if(head->children == NULL){
+        free(head);
+        return;
+    }
+
+    freeListUtil(head->children);
+    free(head);
+}
+
+void freeListUtil(LinkedList* list){
+    if(list == NULL){
+        return;
+    }
+
+    LinkedList* prev = NULL;
+    while(list != NULL){
+        freeTreeUtil(list->node);
+        prev = list;
+        list = list->next;
+
+        free(prev);
+    }
 }

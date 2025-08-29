@@ -1,19 +1,5 @@
 #include "Queue.h"
 
-// int main(int argc, char** argv){
-//     printf("Hello");
-//     Queue* q = initQueue();
-
-//     push(q, NODE, NULL);
-//     push(q, NEWLINE, NULL);
-
-//     printf("%d", pop(q));
-//     printf("%d", pull(q));
-//     printf("%d", pull(q));
-
-//     return 1;
-// }
-
 Queue* initQueue(){
     Queue* q = malloc(sizeof(Queue));
 
