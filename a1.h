@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 typedef struct LinkedList{
+    int x;
     struct TreeNode* node;
     struct LinkedList* next;
 } LinkedList;
@@ -25,5 +26,6 @@ void processOutput(TreeNode*, char*);
 void freeTree(TreeNode*);
 void freeTreeUtil(TreeNode*);
 void freeListUtil(LinkedList*);
+// void sortList(LinkedList*);
 
 #endif

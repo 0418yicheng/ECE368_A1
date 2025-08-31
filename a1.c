@@ -1,5 +1,7 @@
 #include "a1.h"
 #include "Queue.c"
+
+//TODO: Implement multiple trees, create a sorting function
 int main(int argc, char** argv){
     if(argc < 2){
         printf("Not enough arguments\n");
@@ -16,12 +18,12 @@ int main(int argc, char** argv){
     nodes = createTree(file, nodes);
     printf("Created Tree\n");
 
-
+    //TODO: 
     TreeNode* head = findHead(nodes);
 
     processOutput(head, "output.txt");
 
-    // freeTree(head);
+    freeTree(head);
 
     fclose(file);
     return 1;
@@ -50,7 +52,7 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
     char childName;
 
     while(fscanf(file, " %c %c", &parentName, &childName) != EOF){
-        printf("%c %c\n", parentName, childName);
+        // printf("%c %c\n", parentName, childName);
         // Check if the parent and child exist already
         TreeNode* parent;
         TreeNode* child;
@@ -180,9 +182,16 @@ void processOutput(TreeNode* head, char* filename){
                 childrenInLayer--;
 
                 LinkedList* children = node->children; //<-- TODO: Sort this linked list
+
                 if(children == NULL){
                     push(q, POUND, NULL);
-                    push(q, SPACE, NULL);
+
+                    if(childrenInLayer == 0){
+                        childrenInLayer = childrenInNextLayer;
+                        childrenInNextLayer = 0;
+                        push(q, NEWLINE, NULL);
+                    }
+                    else push(q, SPACE, NULL);
                     break;
                 }
 
@@ -210,9 +219,13 @@ void processOutput(TreeNode* head, char* filename){
                 break;
         }
     }
-    fprintf(outputFile, "\n");
+    freeQueue(q);
     fclose(outputFile);
 }
+
+// void sortList(LinkedList* list){
+    
+// }
 
 void freeTree(TreeNode* head){
     freeTreeUtil(head);

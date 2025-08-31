@@ -23,3 +23,5 @@ Queue* initQueue();
 Action pop(Queue*);
 Action pull(Queue*);
 QueueList* push(Queue*, Action, TreeNode*);
+void freeQueue(Queue*);
+void freeQueueUtil(QueueList*);

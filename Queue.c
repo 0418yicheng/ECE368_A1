@@ -48,3 +48,17 @@ QueueList* push(Queue* q, Action a, TreeNode* n){
 
     return list->next;
 }
+
+void freeQueue(Queue* q){
+    freeQueueUtil(q->list);
+    free(q);
+}
+
+void freeQueueUtil(QueueList* list){
+    if(list == NULL){
+        return;
+    }
+
+    freeQueueUtil(list->next);
+    free(list);
+}
