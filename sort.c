@@ -2,18 +2,18 @@
 
 void sortList(LinkedList*);
 LinkedList*  mergeLists(LinkedList*, LinkedList*, LinkedList*);
-LinkedList*  mergeLists2(LinkedList*, LinkedList*, LinkedList*);
 LinkedList* findTail(LinkedList*);
 void insertHead(LinkedList*, LinkedList*);
+LinkedList* insert(LinkedList*, LinkedList*, LinkedList*);
 void printList(LinkedList*);
 LinkedList* add(LinkedList*, int);
 LinkedList* findMin(LinkedList* head);
 
 int main(int argc, char** argv){
     //99 84 27 18 12 57 
-    LinkedList* head = add(NULL, 99);
+    LinkedList* head = add(NULL, 1);
 
-    add(add(add(add(add(head, 84), 27), 18), 12), 57);
+    add(add(add(add(add(head, 2), 4), 3), 8), 7);
     LinkedList* min = findMin(head);
 
     printf("List Created\n");
@@ -21,16 +21,6 @@ int main(int argc, char** argv){
     sortList(head);
     printf("List sorted\n");
     printList(min);
-
-    // LinkedList* head = add(NULL, 99);
-    // LinkedList* small = add(head, 20);
-    // LinkedList* big = add(add(small, 90), 10);
-
-    // printList(head);
-
-    // insertHead(head, big);
-
-    // printList(small);
 }
 
 LinkedList* add(LinkedList* list, int x){
@@ -55,27 +45,24 @@ void sortList(LinkedList* head){
     }
 
     LinkedList* pivot = head;
-    LinkedList* small = head->next;
+    LinkedList* small = head;
     LinkedList* curr = head->next;
-    LinkedList* prev = NULL;
+    LinkedList* prev = head;
 
     LinkedList* tail = findTail(head);
 
-    printf("Found tail\n");
     while(curr != NULL){
+        printf("Curr %d\n", curr->x);
         if(curr->x > pivot->x){
-            //Move the current node to the tail.
-            LinkedList* next = curr->next;
-            if(prev != NULL){
-                prev->next = curr->next;
-            }
+            //Move the current node after small (Moving to tail acreates an infinite loop)
+            // LinkedList* next = curr->next;
+            // if(prev != NULL){
+            //     prev->next = curr->next;
+            // }
             
             //Put curr to the tail
-            curr->next = tail->next;
-            tail->next = curr;
-            tail = curr;
 
-            curr = next;
+            curr = insert(curr, prev, small);
         }
         else{
             if(small->next != NULL) small = small->next;
@@ -86,22 +73,39 @@ void sortList(LinkedList* head){
 
     printList(head);
 
-    LinkedList* left = head->next;
-    // insertHead(head, small);
-    LinkedList* right = small->next;
-    small->next = NULL; //Unlinks the lists
-    head->next = NULL;  
+    LinkedList* left, *right;
 
+    if(head != small){
+        left = head->next;
+        // insertHead(head, small);
+        right = small->next;
+        small->next = NULL; //Unlinks the lists
+        head->next = NULL;  
+    }
+    else{
+        //Case where pivot is already in the correct position
+        left = NULL;
+        right = head->next;
+    }
+    
     printList(left);
     printList(right);
+    printf("\n");
+
+    LinkedList* minLeft = findMin(left);
+    LinkedList* minRight = findMin(right);
 
     sortList(left);
     sortList(right);
 
-    // mergeLists(left, right, head);
-    mergeLists2(left, right, pivot);
+    printf("Sorted Lists\n");
+    printList(minLeft);
+    printList(minRight);
+    mergeLists(minLeft, minRight, pivot);
+    printf("merged\n");
 
     printList(left);
+    
 }
 
 LinkedList* findTail(LinkedList* list){
@@ -115,59 +119,42 @@ LinkedList* findTail(LinkedList* list){
 }
 
 void insertHead(LinkedList* head, LinkedList* location){
+    if(head == location) return;
     LinkedList* next = location->next;
     location->next = head;
     head->next = next;
     //A->B
 }
 
-// Merges 2 sorted linked lists together
-// THe left and the right lists should already be sorted, so you should just be able to do left->pivot->right
-LinkedList* mergeLists(LinkedList* left, LinkedList* right, LinkedList* pivot){
-    LinkedList* head;
-    LinkedList* origHead;
-    if(left != NULL && (right == NULL || left->x < right->x)){
-        head = left;
-        left = left->next;
-    }
-    else if(right != NULL){
-        head = right;
-        right = right->next;
-    }
-    else return NULL;
-    origHead = head;
-    printf("Head established\n");
-
-    while(left != NULL || right != NULL){
-        if(left != NULL && (right == NULL || left->x < right->x)){
-            head->next = left;
-            head = head->next;
-            left = left->next;
-        }
-        else if(right != NULL){
-            head->next = right;
-            head = head->next;
-            right = right->next;
-        }
-        else return NULL;
+// Prev is the node before curr, and we want to insert curr after location
+LinkedList* insert(LinkedList* curr, LinkedList* prev, LinkedList* location){
+    if(prev == location){
+        return curr->next;
     }
 
-    return origHead;
+    LinkedList* next = curr->next;
+    curr->next = location->next;
+
+    location->next = curr;
+    prev->next = next;
+
+    return next;
 }
 
-LinkedList* mergeLists2(LinkedList* left, LinkedList* right, LinkedList* pivot){
-    LinkedList* curr = left;
-    while(curr->next != NULL){
-        curr = curr->next;
+LinkedList* mergeLists(LinkedList* left, LinkedList* right, LinkedList* pivot){
+    if(left == NULL){
+        pivot->next = right;
+        return pivot;
     }
-    curr->next = pivot;
+    LinkedList* leftTail = findTail(left);
+    leftTail->next = pivot;
     pivot->next = right;
 
     return left;
 }
 
 void printList(LinkedList* head){
-    if(head == NULL) printf("Empty\n");
+    if(head == NULL) printf("Empty");
     while(head != NULL){
         printf("%d ", head->x);
         head = head->next;
