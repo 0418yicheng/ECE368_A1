@@ -1,36 +1,33 @@
 #include "a1.h"
 
-void sortList(LinkedList*, int);
+void sortList(LinkedList*);
 LinkedList*  mergeLists(LinkedList*, LinkedList*);
-LinkedList* findTail(LinkedList*, int);
+LinkedList* findTail(LinkedList*);
 void insertHead(LinkedList*, LinkedList*);
 void printList(LinkedList*);
 LinkedList* add(LinkedList*, int);
 
 int main(int argc, char** argv){
     //99 84 27 18 12 57 
+    // LinkedList* head = add(NULL, 99);
+
+    // add(add(add(add(add(head, 84), 27), 18), 12), 57);
+
+    // printf("List Created\n");
+    // printList(head);
+    // sortList(head);
+    // printf("List sorted\n");
+    // printList(head);
+
     LinkedList* head = add(NULL, 99);
+    LinkedList* small = add(head, 20);
+    LinkedList* big = add(add(small, 90), 10);
 
-    add(add(add(add(add(head, 84), 27), 18), 12), 57);
-
-    printf("List Created\n");
-    printList(head);
-    sortList(head, 6);
-    printf("List sorted\n");
     printList(head);
 
-    // LinkedList* left = add(NULL, 1);
-    // add(add(left, 4), 5);
-    // printList(left);
+    insertHead(head, big);
 
-    // LinkedList* right = add(NULL, 2);
-    // add(add(right, 3), 6);
-    // printList(right);
-
-    // printf("Lists created\n");
-
-    // if(mergeLists(left, right) == NULL) printf("Fuck\n");
-    // printList(left);
+    printList(small);
 }
 
 LinkedList* add(LinkedList* list, int x){
@@ -49,8 +46,8 @@ LinkedList* add(LinkedList* list, int x){
 }
 
 //TODO: Need to finish
-void sortList(LinkedList* head, int size){  //TODO: Try not to use size, and instead just create completely different lists. Unlink them.
-    if(size <= 1){
+void sortList(LinkedList* head){  //TODO: Try not to use size, and instead just create completely different lists. Unlink them.
+    if(head == NULL || head->next == NULL){
         return;
     }
 
@@ -59,17 +56,15 @@ void sortList(LinkedList* head, int size){  //TODO: Try not to use size, and ins
     LinkedList* curr = head->next;
     LinkedList* prev = NULL;
 
-    LinkedList* tail = findTail(head, size);
+    LinkedList* tail = findTail(head);
 
-    int lSize = 0;
-    int i = 0;
-    while(curr != NULL && i < size){    //TODO: Account for the size;
+    printf("Found tail\n");
+    while(curr != NULL){
         if(curr->x > pivot->x){
             //Move the current node to the tail.
             LinkedList* next = curr->next;
             if(prev != NULL){
                 prev->next = curr->next;
-                prev = curr;
             }
             
             //Put curr to the tail
@@ -81,34 +76,38 @@ void sortList(LinkedList* head, int size){  //TODO: Try not to use size, and ins
         }
         else{
             small = small->next;
-            lSize ++;
+            prev = curr;
+            curr = curr->next;
         }
-
-        i++;
     }
 
+    printf("Finished iterating\n");
     LinkedList* left = head->next;
     insertHead(head, small);
     LinkedList* right = head->next;
-    sortList(left, lSize);
-    sortList(right, size - lSize - 1);
+    head->next = NULL;  //Unlinks the lists
+    printList(left);
+    printList(right);
+    sortList(left);
+    sortList(right);
 
     mergeLists(left, right);
 }
 
-LinkedList* findTail(LinkedList* list, int size){
-    int i = 0;
-    while(list->next != NULL  && i < size){
+LinkedList* findTail(LinkedList* list){
+    while(list->next != NULL){
         list = list->next;
     }
 
-    if(i != size-1) printf("Fuck\n");
+    // if(i != size-1) printf("Fuck\n");
 
     return list;
 }
 
 void insertHead(LinkedList* head, LinkedList* location){
-
+    LinkedList* next = location->next;
+    location->next = head;
+    head->next = next;
 }
 
 // Merges 2 sorted linked lists together
