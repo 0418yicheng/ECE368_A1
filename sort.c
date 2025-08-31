@@ -1,33 +1,36 @@
 #include "a1.h"
 
 void sortList(LinkedList*);
-LinkedList*  mergeLists(LinkedList*, LinkedList*);
+LinkedList*  mergeLists(LinkedList*, LinkedList*, LinkedList*);
+LinkedList*  mergeLists2(LinkedList*, LinkedList*, LinkedList*);
 LinkedList* findTail(LinkedList*);
 void insertHead(LinkedList*, LinkedList*);
 void printList(LinkedList*);
 LinkedList* add(LinkedList*, int);
+LinkedList* findMin(LinkedList* head);
 
 int main(int argc, char** argv){
     //99 84 27 18 12 57 
-    // LinkedList* head = add(NULL, 99);
-
-    // add(add(add(add(add(head, 84), 27), 18), 12), 57);
-
-    // printf("List Created\n");
-    // printList(head);
-    // sortList(head);
-    // printf("List sorted\n");
-    // printList(head);
-
     LinkedList* head = add(NULL, 99);
-    LinkedList* small = add(head, 20);
-    LinkedList* big = add(add(small, 90), 10);
 
+    add(add(add(add(add(head, 84), 27), 18), 12), 57);
+    LinkedList* min = findMin(head);
+
+    printf("List Created\n");
     printList(head);
+    sortList(head);
+    printf("List sorted\n");
+    printList(min);
 
-    insertHead(head, big);
+    // LinkedList* head = add(NULL, 99);
+    // LinkedList* small = add(head, 20);
+    // LinkedList* big = add(add(small, 90), 10);
 
-    printList(small);
+    // printList(head);
+
+    // insertHead(head, big);
+
+    // printList(small);
 }
 
 LinkedList* add(LinkedList* list, int x){
@@ -45,8 +48,8 @@ LinkedList* add(LinkedList* list, int x){
     return next;
 }
 
-//TODO: Need to finish
-void sortList(LinkedList* head){  //TODO: Try not to use size, and instead just create completely different lists. Unlink them.
+//TODO: Remove the pivot from the two lists, and adjust the merge function
+void sortList(LinkedList* head){
     if(head == NULL || head->next == NULL){
         return;
     }
@@ -75,23 +78,30 @@ void sortList(LinkedList* head){  //TODO: Try not to use size, and instead just 
             curr = next;
         }
         else{
-            small = small->next;
+            if(small->next != NULL) small = small->next;
             prev = curr;
             curr = curr->next;
         }
     }
 
-    printf("Finished iterating\n");
+    printList(head);
+
     LinkedList* left = head->next;
-    insertHead(head, small);
-    LinkedList* right = head->next;
-    head->next = NULL;  //Unlinks the lists
+    // insertHead(head, small);
+    LinkedList* right = small->next;
+    small->next = NULL; //Unlinks the lists
+    head->next = NULL;  
+
     printList(left);
     printList(right);
+
     sortList(left);
     sortList(right);
 
-    mergeLists(left, right);
+    // mergeLists(left, right, head);
+    mergeLists2(left, right, pivot);
+
+    printList(left);
 }
 
 LinkedList* findTail(LinkedList* list){
@@ -108,10 +118,12 @@ void insertHead(LinkedList* head, LinkedList* location){
     LinkedList* next = location->next;
     location->next = head;
     head->next = next;
+    //A->B
 }
 
 // Merges 2 sorted linked lists together
-LinkedList* mergeLists(LinkedList* left, LinkedList* right){
+// THe left and the right lists should already be sorted, so you should just be able to do left->pivot->right
+LinkedList* mergeLists(LinkedList* left, LinkedList* right, LinkedList* pivot){
     LinkedList* head;
     LinkedList* origHead;
     if(left != NULL && (right == NULL || left->x < right->x)){
@@ -143,11 +155,33 @@ LinkedList* mergeLists(LinkedList* left, LinkedList* right){
     return origHead;
 }
 
+LinkedList* mergeLists2(LinkedList* left, LinkedList* right, LinkedList* pivot){
+    LinkedList* curr = left;
+    while(curr->next != NULL){
+        curr = curr->next;
+    }
+    curr->next = pivot;
+    pivot->next = right;
+
+    return left;
+}
+
 void printList(LinkedList* head){
+    if(head == NULL) printf("Empty\n");
     while(head != NULL){
         printf("%d ", head->x);
         head = head->next;
     }
 
     printf("\n");
+}
+
+LinkedList* findMin(LinkedList* head){
+    LinkedList* min = head;
+    while(head != NULL){
+        min = head->x < min->x ? head : min;
+        head = head->next;
+    }
+
+    return min;
 }
