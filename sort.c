@@ -1,19 +1,11 @@
-#include "a1.h"
+#include "sort.h"
 
-void sortList(LinkedList*);
-LinkedList*  mergeLists(LinkedList*, LinkedList*, LinkedList*);
-LinkedList* findTail(LinkedList*);
-void insertHead(LinkedList*, LinkedList*);
-LinkedList* insert(LinkedList*, LinkedList*, LinkedList*);
-void printList(LinkedList*);
-LinkedList* add(LinkedList*, int);
-LinkedList* findMin(LinkedList* head);
 
 int main(int argc, char** argv){
     //99 84 27 18 12 57 
-    LinkedList* head = add(NULL, 1);
+    LinkedList* head = add(NULL, 3);
 
-    add(add(add(add(add(head, 2), 4), 3), 8), 7);
+    add(add(add(add(add(add(head, 36), 39), 84), 15), 94), 25);
     LinkedList* min = findMin(head);
 
     printf("List Created\n");
@@ -38,7 +30,7 @@ LinkedList* add(LinkedList* list, int x){
     return next;
 }
 
-//TODO: Remove the pivot from the two lists, and adjust the merge function
+//Modify the algorithm to put the next small number after small, rather than putting larger numbers after small.
 void sortList(LinkedList* head){
     if(head == NULL || head->next == NULL){
         return;
@@ -52,34 +44,25 @@ void sortList(LinkedList* head){
     LinkedList* tail = findTail(head);
 
     while(curr != NULL){
-        printf("Curr %d\n", curr->x);
-        if(curr->x > pivot->x){
-            //Move the current node after small (Moving to tail acreates an infinite loop)
-            // LinkedList* next = curr->next;
-            // if(prev != NULL){
-            //     prev->next = curr->next;
-            // }
-            
-            //Put curr to the tail
-
+        if(curr->x < pivot->x){
+            //Insert curr after small, and continue iterating
             curr = insert(curr, prev, small);
+            small = small->next;
         }
         else{
-            if(small->next != NULL) small = small->next;
+            // if(small->next != NULL) small = small->next;
             prev = curr;
             curr = curr->next;
         }
     }
 
-    printList(head);
-
     LinkedList* left, *right;
-
     if(head != small){
         left = head->next;
-        // insertHead(head, small);
         right = small->next;
-        small->next = NULL; //Unlinks the lists
+
+        //Unlink the lists
+        small->next = NULL; 
         head->next = NULL;  
     }
     else{
@@ -87,33 +70,21 @@ void sortList(LinkedList* head){
         left = NULL;
         right = head->next;
     }
-    
-    printList(left);
-    printList(right);
-    printf("\n");
 
+    // Keep track of where the new head of the linkedlist will be
     LinkedList* minLeft = findMin(left);
     LinkedList* minRight = findMin(right);
 
     sortList(left);
     sortList(right);
 
-    printf("Sorted Lists\n");
-    printList(minLeft);
-    printList(minRight);
     mergeLists(minLeft, minRight, pivot);
-    printf("merged\n");
-
-    printList(left);
-    
 }
 
 LinkedList* findTail(LinkedList* list){
     while(list->next != NULL){
         list = list->next;
     }
-
-    // if(i != size-1) printf("Fuck\n");
 
     return list;
 }
@@ -123,7 +94,6 @@ void insertHead(LinkedList* head, LinkedList* location){
     LinkedList* next = location->next;
     location->next = head;
     head->next = next;
-    //A->B
 }
 
 // Prev is the node before curr, and we want to insert curr after location
@@ -141,6 +111,7 @@ LinkedList* insert(LinkedList* curr, LinkedList* prev, LinkedList* location){
     return next;
 }
 
+// Assumes the lists are already sorted, where left contains values less than pivot, and right contains values greater than pivot
 LinkedList* mergeLists(LinkedList* left, LinkedList* right, LinkedList* pivot){
     if(left == NULL){
         pivot->next = right;

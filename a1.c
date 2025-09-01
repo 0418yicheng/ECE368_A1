@@ -223,10 +223,6 @@ void processOutput(TreeNode* head, char* filename){
     fclose(outputFile);
 }
 
-// void sortList(LinkedList* list){
-    
-// }
-
 void freeTree(TreeNode* head){
     freeTreeUtil(head);
 }
