@@ -1,3 +1,6 @@
+#ifndef QUEUE_H_
+#define QUEUE_H_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "a1.h"
@@ -25,3 +28,5 @@ Action pull(Queue*);
 QueueList* push(Queue*, Action, TreeNode*);
 void freeQueue(Queue*);
 void freeQueueUtil(QueueList*);
+
+#endif

@@ -2,7 +2,7 @@
 #include "Queue.c"
 #include "sort.c"
 
-//TODO: Implement multiple trees, implement invalid detection
+//TODO: implement invalid detection
 int main(int argc, char** argv){
     if(argc < 2){
         printf("Not enough arguments\n");
@@ -20,17 +20,27 @@ int main(int argc, char** argv){
     printf("Created Tree\n");
 
     printList(nodes);
-    //TODO: 
-    // TreeNode* head = findHead(nodes);
+
     printf("Finding heads\n");
     LinkedList* heads = findHead2(nodes);
 
     printList(heads);
 
-    processOutput(heads->node, "output.txt");
+    FILE* outputFile = fopen("output.txt", "w");
+    while(heads != NULL){
+        LinkedList* next = heads->next;
+        processOutput(outputFile, heads->node);
+        free(heads->node);
 
-    freeTree(heads->node);
+        if(heads->next != NULL){
+            fprintf(outputFile, "\n");
+        }
+        heads = next;
+    }
 
+    // freeTree(heads->node);
+
+    fclose(outputFile);
     fclose(file);
     return 1;
 }
@@ -58,7 +68,6 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
     char childName;
 
     while(fscanf(file, " %c %c", &parentName, &childName) != EOF){
-        // printf("%c %c\n", parentName, childName);
         // Check if the parent and child exist already
         TreeNode* parent;
         TreeNode* child;
@@ -67,13 +76,11 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
         LinkedList* curr = nodes;
         while(curr != NULL && !(parentFound && childFound)){
             if(curr->node->name == parentName){
-                // printf("Parent Found\n");
                 parentFound = true;
                 parent = curr->node;
             }
 
             if(curr->node->name == childName){
-                // printf("Child found\n");
                 childFound = true;
                 child = curr->node;
             }
@@ -175,10 +182,10 @@ LinkedList* findHead2(LinkedList* nodes){
         curr = curr->next;
     }
 
-    printf("visited: ");
-    printList(visited);
+    // printf("visited: ");
+    // printList(visited);
 
-    printf("Finished making list\n");
+    // printf("Finished making list\n");
     LinkedList* heads = nodes;
     curr = heads;
     while(curr != NULL){
@@ -192,7 +199,7 @@ LinkedList* findHead2(LinkedList* nodes){
         curr = next;
     }
 
-    printf("Finished deleting\n");
+    // printf("Finished deleting\n");
 
     return heads;
 }
@@ -233,8 +240,8 @@ bool contains(LinkedList* visited, TreeNode* node){
     return false;
 }
 
-void processOutput(TreeNode* head, char* filename){
-    FILE* outputFile = fopen(filename, "w");
+void processOutput(FILE* outputFile, TreeNode* head){
+    // FILE* outputFile = fopen(filename, "w");
     Queue* q = initQueue();
     
     push(q, NODE, head);
@@ -291,7 +298,6 @@ void processOutput(TreeNode* head, char* filename){
         }
     }
     freeQueue(q);
-    fclose(outputFile);
 }
 
 void freeTree(TreeNode* head){
