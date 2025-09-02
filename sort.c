@@ -1,36 +1,21 @@
 #include "sort.h"
 
 
-int main(int argc, char** argv){
-    //99 84 27 18 12 57 
-    LinkedList* head = add(NULL, 3);
+// int main(int argc, char** argv){
+//     //99 84 27 18 12 57 
+//     LinkedList* head = add(NULL, 3);
 
-    add(add(add(add(add(add(head, 36), 39), 84), 15), 94), 25);
-    LinkedList* min = findMin(head);
+//     add(add(add(add(add(add(head, 36), 39), 84), 15), 94), 25);
+//     LinkedList* min = findMin(head);
 
-    printf("List Created\n");
-    printList(head);
-    sortList(head);
-    printf("List sorted\n");
-    printList(min);
-}
+//     printf("List Created\n");
+//     printList(head);
+//     sortList(head);
+//     printf("List sorted\n");
+//     printList(min);
+// }
 
-LinkedList* add(LinkedList* list, int x){
-    if(list == NULL){
-        list = malloc(sizeof(LinkedList));
-        list->x = x;
-        list->next = NULL;
-        return list;
-    }
-    LinkedList* next = malloc(sizeof(LinkedList));
-    next->x = x;
-    next->next = NULL;
-
-    list->next = next;
-    return next;
-}
-
-//Modify the algorithm to put the next small number after small, rather than putting larger numbers after small.
+// Sorts a linkedlist using mergesort
 void sortList(LinkedList* head){
     if(head == NULL || head->next == NULL){
         return;
@@ -41,16 +26,13 @@ void sortList(LinkedList* head){
     LinkedList* curr = head->next;
     LinkedList* prev = head;
 
-    LinkedList* tail = findTail(head);
-
     while(curr != NULL){
-        if(curr->x < pivot->x){
+        if(curr->node->name < pivot->node->name){
             //Insert curr after small, and continue iterating
             curr = insert(curr, prev, small);
             small = small->next;
         }
         else{
-            // if(small->next != NULL) small = small->next;
             prev = curr;
             curr = curr->next;
         }
@@ -127,7 +109,7 @@ LinkedList* mergeLists(LinkedList* left, LinkedList* right, LinkedList* pivot){
 void printList(LinkedList* head){
     if(head == NULL) printf("Empty");
     while(head != NULL){
-        printf("%d ", head->x);
+        printf("%c ", head->node->name);
         head = head->next;
     }
 
@@ -137,7 +119,7 @@ void printList(LinkedList* head){
 LinkedList* findMin(LinkedList* head){
     LinkedList* min = head;
     while(head != NULL){
-        min = head->x < min->x ? head : min;
+        min = head->node->name < min->node->name ? head : min;
         head = head->next;
     }
 

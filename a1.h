@@ -26,6 +26,8 @@ void processOutput(TreeNode*, char*);
 void freeTree(TreeNode*);
 void freeTreeUtil(TreeNode*);
 void freeListUtil(LinkedList*);
+LinkedList* findHead2(LinkedList*);
+LinkedList* delete(LinkedList*, LinkedList*);
 // void sortList(LinkedList*);
 
 #endif

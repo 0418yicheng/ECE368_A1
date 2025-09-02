@@ -1,7 +1,8 @@
 #include "a1.h"
 #include "Queue.c"
+#include "sort.c"
 
-//TODO: Implement multiple trees, create a sorting function
+//TODO: Implement multiple trees, implement invalid detection
 int main(int argc, char** argv){
     if(argc < 2){
         printf("Not enough arguments\n");
@@ -18,12 +19,17 @@ int main(int argc, char** argv){
     nodes = createTree(file, nodes);
     printf("Created Tree\n");
 
+    printList(nodes);
     //TODO: 
-    TreeNode* head = findHead(nodes);
+    // TreeNode* head = findHead(nodes);
+    printf("Finding heads\n");
+    LinkedList* heads = findHead2(nodes);
 
-    processOutput(head, "output.txt");
+    printList(heads);
 
-    freeTree(head);
+    processOutput(heads->node, "output.txt");
+
+    freeTree(heads->node);
 
     fclose(file);
     return 1;
@@ -121,16 +127,14 @@ LinkedList* addList(LinkedList* list, TreeNode* node){
     return list;
 }
 
-// Assume that there is only one head: To confirm, check at the end if all of the visited array has been traversed
+// TODO: Account for multiple trees
 TreeNode* findHead(LinkedList* nodes){
     LinkedList* visited = NULL;
     TreeNode* head = nodes->node;
 
     while(nodes != NULL){
-        // printf("Checking %c...\n", nodes->node->name);
         // Skip the current iteration if we've already seen it. It cannot be the head
         if(contains(visited, nodes->node)){
-            // printf("Skipping %c\n", nodes->node->name);
             nodes = nodes->next;
             continue;
         } 
@@ -153,6 +157,70 @@ TreeNode* findHead(LinkedList* nodes){
         nodes = nodes->next;
     }
     return head;
+}
+
+LinkedList* findHead2(LinkedList* nodes){
+    LinkedList* visited = NULL;
+
+    LinkedList* curr = nodes;
+    while(curr != NULL){
+        LinkedList* child = curr->node->children;
+
+        while(child != NULL){
+            //If child is already in the list, there should be an error because there are 2 parents
+            visited = addList(visited, child->node);
+            child = child->next;
+        }
+
+        curr = curr->next;
+    }
+
+    printf("visited: ");
+    printList(visited);
+
+    printf("Finished making list\n");
+    LinkedList* heads = nodes;
+    curr = heads;
+    while(curr != NULL){
+        // printList(heads);
+        // printf("%c\n", curr->node->name);
+
+        LinkedList* next = curr->next;
+        if(contains(visited, curr->node)){
+            heads = delete(heads, curr);
+        }
+        curr = next;
+    }
+
+    printf("Finished deleting\n");
+
+    return heads;
+}
+
+//Delete node from nodes, and return the new head (in case the deleted one is the head)
+LinkedList* delete(LinkedList* nodes, LinkedList* node){
+    LinkedList* prev = NULL;
+    LinkedList* curr = nodes;
+
+    while(curr != NULL){
+        if(curr == node){
+            if(prev != NULL){
+                prev->next = curr->next;
+                free(curr);
+
+                return nodes;
+            }
+            else{
+                free(curr);
+                return nodes->next;
+            }
+        }
+
+        prev = curr;
+        curr = curr->next;
+    }
+
+    return nodes;
 }
 
 bool contains(LinkedList* visited, TreeNode* node){
@@ -182,6 +250,9 @@ void processOutput(TreeNode* head, char* filename){
                 childrenInLayer--;
 
                 LinkedList* children = node->children; //<-- TODO: Sort this linked list
+                LinkedList* minChild = findMin(children);
+                sortList(children);
+                children = minChild;
 
                 if(children == NULL){
                     push(q, POUND, NULL);

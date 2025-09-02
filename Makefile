@@ -15,13 +15,9 @@ a1: $(OBJS)
 .c.o: 
 	$(GCC) -c ./$*.c 
 
-# test0:
-# 	a1 .\testcases\input\testcase_0.txt
-# 	diff ./output.txt .\testcases\expected/output_0.txt
 test0:
 	a1 .\testcases\input\testcase_0.txt
-	powershell -Command "(Get-Content output.txt) -replace '`r' | Set-Content output_unix.txt"
-	diff output_unix.txt output_0.txt
+	diff ./output.txt .\testcases\expected/output_0.txt
 
 test1:
 	a1 ./testcases/input/testcase_1.txt
