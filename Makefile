@@ -31,5 +31,13 @@ test3:
 	a1 ./testcases/input/testcase_3.txt
 	diff ./output.txt ./testcases/expected/output_3.txt
 
+test4:
+	a1 ./testcases/input/testcase_4.txt
+	diff ./output.txt ./testcases/expected/output_4.txt
+
+test5:
+	a1 ./testcases/input/testcase_5.txt
+	diff ./output.txt ./testcases/expected/output_5.txt
+
 clean: # remove all machine generated files
 	rm -f *.o a1 output.txt *.exe

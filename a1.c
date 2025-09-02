@@ -17,14 +17,15 @@ int main(int argc, char** argv){
 
     LinkedList* nodes = NULL;
     nodes = createTree(file, nodes);
-    printf("Created Tree\n");
+    // printf("Created Tree\n");
 
-    printList(nodes);
+    // printList(nodes);
 
-    printf("Finding heads\n");
+    // printf("Finding heads\n");
     LinkedList* heads = findHead2(nodes);
 
-    printList(heads);
+    // printf("Heads: ");
+    // printList(heads);
 
     FILE* outputFile = fopen("output.txt", "w");
     while(heads != NULL){
@@ -33,12 +34,11 @@ int main(int argc, char** argv){
         free(heads->node);
 
         if(heads->next != NULL){
+            printf("\n");
             fprintf(outputFile, "\n");
         }
         heads = next;
     }
-
-    // freeTree(heads->node);
 
     fclose(outputFile);
     fclose(file);
@@ -230,6 +230,7 @@ LinkedList* delete(LinkedList* nodes, LinkedList* node){
     return nodes;
 }
 
+// Check if the linkedlsit contains a specified node
 bool contains(LinkedList* visited, TreeNode* node){
     while(visited != NULL){
         if(visited->node == node) return true;
@@ -240,23 +241,26 @@ bool contains(LinkedList* visited, TreeNode* node){
     return false;
 }
 
+// Prints out the tree, formatted in teh required way into the output file
 void processOutput(FILE* outputFile, TreeNode* head){
-    // FILE* outputFile = fopen(filename, "w");
     Queue* q = initQueue();
     
     push(q, NODE, head);
     push(q, NEWLINE, NULL);
-    int childrenInLayer = 1;
+    int childrenInLayer = 1;    //Keep track of number of children in layer to know when to print space vs newline
     int childrenInNextLayer = 0;
+
+    // BFS to formatted output correctly
     while(q->list != NULL){
         TreeNode* node = q->list->node;
         Action a = pull(q);
         switch(a){
             case NODE:
                 fprintf(outputFile, "%c", node->name);
+                printf("%c", node->name);
                 childrenInLayer--;
 
-                LinkedList* children = node->children; //<-- TODO: Sort this linked list
+                LinkedList* children = node->children;
                 LinkedList* minChild = findMin(children);
                 sortList(children);
                 children = minChild;
@@ -288,12 +292,15 @@ void processOutput(FILE* outputFile, TreeNode* head){
                 break;
             case POUND:
                 fprintf(outputFile, "#");
+                printf("#");
                 break;
             case SPACE:
                 fprintf(outputFile, " ");
+                printf(" ");
                 break;
             case NEWLINE:
                 fprintf(outputFile, "\n");
+                printf("\n");
                 break;
         }
     }
