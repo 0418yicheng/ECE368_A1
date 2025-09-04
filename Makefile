@@ -16,11 +16,11 @@ a1: $(OBJS)
 	$(GCC) -c ./$*.c 
 
 test0:
-	a1 .\testcases\input\testcase_0.txt
-	diff ./output.txt .\testcases\expected/output_0.txt
+	./a1 ./testcases/input/testcase_0.txt
+	diff ./output.txt ./testcases/expected/output_0.txt
 
 test1:
-	a1 ./testcases/input/testcase_1.txt
+	./a1 ./testcases/input/testcase_1.txt
 	diff ./output.txt ./testcases/expected/output_1.txt
 
 test2:
@@ -44,6 +44,9 @@ test6:
 
 test7:
 	a1 ./testcases/input/testcase_7.txt
+
+leaktest0:
+	valgrind ./a1 ./testcases/input/testcase_0.txt
 
 clean: # remove all machine generated files
 	rm -f *.o a1 output.txt *.exe

@@ -25,14 +25,15 @@ int main(int argc, char** argv){
     }
 
     //Do cycle detection (Can make this more efficient, but I'm being lazy)
-    if(cycleDetection(nodes)){
-        //How to deal with memory leaks here?
-        printf("INVALID\n");
-        return 0;
-    }
+    // if(cycleDetection(nodes)){   //<--A lot of memory leaks here
+    //     //How to deal with memory leaks here?
+    //     printf("INVALID\n");
+    //     return 0;
+    // }
 
     // Find the heads of the trees so we can bfs
-    LinkedList* heads = findHead2(nodes);
+    LinkedList* heads = findHead2(nodes);\
+    LinkedList* h = heads;
 
     FILE* outputFile = fopen("output.txt", "w");
     while(heads != NULL){
@@ -47,6 +48,7 @@ int main(int argc, char** argv){
         heads = next;
     }
 
+    freeVisited(h);
     fclose(outputFile);
     fclose(file);
     return 1;
@@ -94,31 +96,33 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
 
             curr = curr->next;
         }
+
+        if(childFound){
+            if(child->hasParent){
+                LinkedList* heads = findHead2(nodes);
+                while(heads != NULL){
+                    LinkedList* next = heads->next;
+                    freeTree(heads->node);
+                    heads = next;
+                }
+                return NULL;
+            }
+        }
+        else{   //Create a new node if the child doesn't exist
+            child =  createNode(childName);
+            nodes = addList(nodes, child);
+        }
+
         // Create a new node if the parent doesn't exist
         if(!parentFound){
             parent = createNode(parentName);
             nodes = addList(nodes, parent);
         }
 
-        // Create a new node if the child doesn't exist
-        if(!childFound){
-            child =  createNode(childName);
-            nodes = addList(nodes, child);
-        }
-
         // Make c a child of p
-        if(!child->hasParent){
+        if(!child->hasParent){  //If statement uneccessary
             parent->children = addList(parent->children, child);
             child->hasParent = true;
-        }
-        else{
-            LinkedList* heads = findHead2(nodes);
-            while(heads != NULL){
-                LinkedList* next = heads->next;
-                freeTree(heads->node);
-                heads = next;
-            }
-            return NULL;
         }
     }
 
@@ -208,6 +212,8 @@ LinkedList* findHead2(LinkedList* nodes){
         }
         curr = next;
     }
+
+    freeVisited(visited);
 
     return heads;
 }
@@ -356,12 +362,13 @@ void freeVisited(LinkedList* visited){
 //Iterate through the list of nodes, and apply cycle detection to each
 bool cycleDetection(LinkedList* list){
     int i = 0;
+
     while(list != NULL){
         LinkedList* visited = NULL;
 
         if(cycleDetectionUtil(list->node, visited)){
             //Free the list
-            freeVisited(visited);   //<-- The list isn't global, so visited should be null here.
+            // freeVisited(visited);   //<-- The list isn't global, so visited should be null here.
             return true;
         }
 
@@ -393,7 +400,7 @@ bool cycleDetectionUtil(TreeNode* node, LinkedList* visited){
         curr = curr->next;
     }
 
-    freeVisited(visited);
+    // freeVisited(visited);
 
     return false;
 }

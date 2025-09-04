@@ -1,20 +1,5 @@
 #include "sort.h"
 
-
-// int main(int argc, char** argv){
-//     //99 84 27 18 12 57 
-//     LinkedList* head = add(NULL, 3);
-
-//     add(add(add(add(add(add(head, 36), 39), 84), 15), 94), 25);
-//     LinkedList* min = findMin(head);
-
-//     printf("List Created\n");
-//     printList(head);
-//     sortList(head);
-//     printf("List sorted\n");
-//     printList(min);
-// }
-
 // Sorts a linkedlist using mergesort
 void sortList(LinkedList* head){
     if(head == NULL || head->next == NULL){
