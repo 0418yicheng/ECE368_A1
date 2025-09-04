@@ -13,6 +13,7 @@ typedef struct LinkedList{
 
 typedef struct TreeNode {
     char name;
+    bool hasParent;
     struct LinkedList* children;
 
 } TreeNode;
@@ -28,6 +29,7 @@ void freeTreeUtil(TreeNode*);
 void freeListUtil(LinkedList*);
 LinkedList* findHead2(LinkedList*);
 LinkedList* delete(LinkedList*, LinkedList*);
-// void sortList(LinkedList*);
+bool cycleDetection(LinkedList*);
+bool cycleDetectionUtil(TreeNode*, LinkedList*);
 
 #endif

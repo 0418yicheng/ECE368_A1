@@ -17,11 +17,24 @@ int main(int argc, char** argv){
 
     LinkedList* nodes = NULL;
     nodes = createTree(file, nodes);
+    if(nodes == NULL){
+        printf("Multiple parents\n");
+        printf("INVALID\n");
+        //free the tree
+        return 0;
+    }
     // printf("Created Tree\n");
 
     // printList(nodes);
 
     // printf("Finding heads\n");
+
+    //Do cycle detection (Can make this more efficient, but I'm being lazy)
+    if(cycleDetection(nodes)){
+        printf("Cycle detected\n");
+        printf("INVALID\n");
+        return 0;
+    }
     LinkedList* heads = findHead2(nodes);
 
     // printf("Heads: ");
@@ -100,7 +113,13 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
         }
 
         // Make c a child of p
-        parent->children = addList(parent->children, child);
+        if(!child->hasParent){
+            parent->children = addList(parent->children, child);
+            child->hasParent = true;
+        }
+        else{
+            return NULL;
+        }
     }
 
     return nodes;
@@ -109,6 +128,7 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
 TreeNode* createNode(char name){
     TreeNode* node = malloc(sizeof(TreeNode));
     node->name = name;
+    node->hasParent = false;
     node->children = NULL;
 
     return node;
@@ -182,24 +202,15 @@ LinkedList* findHead2(LinkedList* nodes){
         curr = curr->next;
     }
 
-    // printf("visited: ");
-    // printList(visited);
-
-    // printf("Finished making list\n");
     LinkedList* heads = nodes;
     curr = heads;
     while(curr != NULL){
-        // printList(heads);
-        // printf("%c\n", curr->node->name);
-
         LinkedList* next = curr->next;
         if(contains(visited, curr->node)){
             heads = delete(heads, curr);
         }
         curr = next;
     }
-
-    // printf("Finished deleting\n");
 
     return heads;
 }
@@ -334,4 +345,46 @@ void freeListUtil(LinkedList* list){
 
         free(prev);
     }
+}
+
+//Iterate through the list of nodes, and apply cycle detection to each
+bool cycleDetection(LinkedList* list){
+    int i = 0;
+    while(list != NULL){
+        LinkedList* visited = NULL;
+
+        if(cycleDetectionUtil(list->node, visited)){
+            //Free the list
+
+            return true;
+        }
+
+        //TODO: free the list
+        
+        i++;
+        list = list->next;
+    }
+
+    return false;
+}
+
+//DFS through the tree
+bool cycleDetectionUtil(TreeNode* node, LinkedList* visited){
+    if(node == NULL){
+        return false;
+    }
+    if(contains(visited, node)){
+        return true;
+    }
+
+    visited = addList(visited, node);   //memory management of this?
+
+    LinkedList* curr = node->children;
+    while(curr != NULL){
+        if(cycleDetectionUtil(curr->node, visited)) return true;
+        
+        curr = curr->next;
+    }
+
+    return false;
 }
