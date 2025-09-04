@@ -2,7 +2,7 @@
 #include "Queue.c"
 #include "sort.c"
 
-//TODO: implement invalid detection
+//TODO: valgrind to check memory leaks.
 int main(int argc, char** argv){
     if(argc < 2){
         printf("Not enough arguments\n");
@@ -15,36 +15,30 @@ int main(int argc, char** argv){
         return 0;
     }
 
+    //TODO: valgrind on test6 to check if this part works.
     LinkedList* nodes = NULL;
     nodes = createTree(file, nodes);
     if(nodes == NULL){
-        printf("Multiple parents\n");
         printf("INVALID\n");
-        //free the tree
+
         return 0;
     }
-    // printf("Created Tree\n");
-
-    // printList(nodes);
-
-    // printf("Finding heads\n");
 
     //Do cycle detection (Can make this more efficient, but I'm being lazy)
     if(cycleDetection(nodes)){
-        printf("Cycle detected\n");
+        //How to deal with memory leaks here?
         printf("INVALID\n");
         return 0;
     }
-    LinkedList* heads = findHead2(nodes);
 
-    // printf("Heads: ");
-    // printList(heads);
+    // Find the heads of the trees so we can bfs
+    LinkedList* heads = findHead2(nodes);
 
     FILE* outputFile = fopen("output.txt", "w");
     while(heads != NULL){
         LinkedList* next = heads->next;
         processOutput(outputFile, heads->node);
-        free(heads->node);
+        freeTree(heads->node);
 
         if(heads->next != NULL){
             printf("\n");
@@ -118,6 +112,12 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
             child->hasParent = true;
         }
         else{
+            LinkedList* heads = findHead2(nodes);
+            while(heads != NULL){
+                LinkedList* next = heads->next;
+                freeTree(heads->node);
+                heads = next;
+            }
             return NULL;
         }
     }
@@ -169,16 +169,13 @@ TreeNode* findHead(LinkedList* nodes){
         //Traverse through the children of the current node
         LinkedList* children = nodes->node->children;
         while(children != NULL){
-            if(contains(visited, children->node)){
-                //TODO: I think that this means the tree is invalid because the node would have 2 parents
-                printf("\tSHIT\n");
-                return NULL;    //INVALID condition
-            }
-
+            // if(contains(visited, children->node)){
+            //     return NULL;    //INVALID condition
+            // }
             if(children->node == head){
                 head = nodes->node;
             }
-            visited = addList(visited, children->node);
+            // visited = addList(visited, children->node);
             children = children->next;
         }
         nodes = nodes->next;
@@ -347,6 +344,15 @@ void freeListUtil(LinkedList* list){
     }
 }
 
+// When keeping track of visited nodes, we don't want to delete the nodes, but we do want to free the rest of the linkedlist
+void freeVisited(LinkedList* visited){
+    if(visited == NULL) return;
+
+    freeVisited(visited->next);
+
+    free(visited);
+}
+
 //Iterate through the list of nodes, and apply cycle detection to each
 bool cycleDetection(LinkedList* list){
     int i = 0;
@@ -355,11 +361,12 @@ bool cycleDetection(LinkedList* list){
 
         if(cycleDetectionUtil(list->node, visited)){
             //Free the list
-
+            freeVisited(visited);   //<-- The list isn't global, so visited should be null here.
             return true;
         }
 
         //TODO: free the list
+        freeVisited(visited);
         
         i++;
         list = list->next;
@@ -385,6 +392,8 @@ bool cycleDetectionUtil(TreeNode* node, LinkedList* visited){
         
         curr = curr->next;
     }
+
+    freeVisited(visited);
 
     return false;
 }

@@ -31,5 +31,6 @@ LinkedList* findHead2(LinkedList*);
 LinkedList* delete(LinkedList*, LinkedList*);
 bool cycleDetection(LinkedList*);
 bool cycleDetectionUtil(TreeNode*, LinkedList*);
+void freeVisited(LinkedList*);
 
 #endif
