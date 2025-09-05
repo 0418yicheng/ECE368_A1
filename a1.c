@@ -32,7 +32,7 @@ int main(int argc, char** argv){
     // }
 
     // Find the heads of the trees so we can bfs
-    LinkedList* heads = findHead2(nodes);\
+    LinkedList* heads = findHead2(nodes);
     LinkedList* h = heads;
 
     FILE* outputFile = fopen("output.txt", "w");
@@ -158,35 +158,7 @@ LinkedList* addList(LinkedList* list, TreeNode* node){
     return list;
 }
 
-// TODO: Account for multiple trees
-TreeNode* findHead(LinkedList* nodes){
-    LinkedList* visited = NULL;
-    TreeNode* head = nodes->node;
-
-    while(nodes != NULL){
-        // Skip the current iteration if we've already seen it. It cannot be the head
-        if(contains(visited, nodes->node)){
-            nodes = nodes->next;
-            continue;
-        } 
-
-        //Traverse through the children of the current node
-        LinkedList* children = nodes->node->children;
-        while(children != NULL){
-            // if(contains(visited, children->node)){
-            //     return NULL;    //INVALID condition
-            // }
-            if(children->node == head){
-                head = nodes->node;
-            }
-            // visited = addList(visited, children->node);
-            children = children->next;
-        }
-        nodes = nodes->next;
-    }
-    return head;
-}
-
+//Modify to instead of deleting, just creating a new linked list.
 LinkedList* findHead2(LinkedList* nodes){
     LinkedList* visited = NULL;
 
@@ -195,7 +167,6 @@ LinkedList* findHead2(LinkedList* nodes){
         LinkedList* child = curr->node->children;
 
         while(child != NULL){
-            //If child is already in the list, there should be an error because there are 2 parents
             visited = addList(visited, child->node);
             child = child->next;
         }
@@ -231,9 +202,10 @@ LinkedList* delete(LinkedList* nodes, LinkedList* node){
 
                 return nodes;
             }
-            else{
+            else{   //Deleting from the head of the linked list
+                LinkedList* next = curr->next;
                 free(curr);
-                return nodes->next;
+                return next;
             }
         }
 

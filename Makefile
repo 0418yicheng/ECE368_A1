@@ -45,8 +45,26 @@ test6:
 test7:
 	a1 ./testcases/input/testcase_7.txt
 
-leaktest0:
+leak0:
 	valgrind ./a1 ./testcases/input/testcase_0.txt
+
+leak1:
+	valgrind ./a1 ./testcases/input/testcase_1.txt
+
+leak2:
+	valgrind ./a1 ./testcases/input/testcase_2.txt
+
+leak3:
+	valgrind ./a1 ./testcases/input/testcase_3.txt
+
+leak4:
+	valgrind ./a1 ./testcases/input/testcase_4.txt
+
+leak5:
+	valgrind ./a1 ./testcases/input/testcase_5.txt
+
+leak6:
+	valgrind ./a1 ./testcases/input/testcase_6.txt
 
 clean: # remove all machine generated files
 	rm -f *.o a1 output.txt *.exe
