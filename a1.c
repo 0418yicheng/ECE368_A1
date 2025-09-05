@@ -33,6 +33,8 @@ int main(int argc, char** argv){
 
     // Find the heads of the trees so we can bfs
     LinkedList* heads = findHead2(nodes);
+    freeVisited(nodes);
+    // LinkedList* heads = nodes;
     LinkedList* h = heads;
 
     FILE* outputFile = fopen("output.txt", "w");
@@ -49,6 +51,7 @@ int main(int argc, char** argv){
     }
 
     freeVisited(h);
+    // freeVisited(nodes);
     fclose(outputFile);
     fclose(file);
     return 1;
@@ -111,6 +114,7 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
         else{   //Create a new node if the child doesn't exist
             child =  createNode(childName);
             nodes = addList(nodes, child);
+
         }
 
         // Create a new node if the parent doesn't exist
@@ -174,14 +178,14 @@ LinkedList* findHead2(LinkedList* nodes){
         curr = curr->next;
     }
 
-    LinkedList* heads = nodes;
-    curr = heads;
+    LinkedList* heads = NULL;
+    curr = nodes;
     while(curr != NULL){
-        LinkedList* next = curr->next;
-        if(contains(visited, curr->node)){
-            heads = delete(heads, curr);
+        if(!contains(visited, curr->node)){
+            heads = addList(heads, curr->node);
         }
-        curr = next;
+
+        curr = curr->next;
     }
 
     freeVisited(visited);
@@ -298,11 +302,6 @@ void freeTree(TreeNode* head){
 }
 
 void freeTreeUtil(TreeNode* head){
-    if(head->children == NULL){
-        free(head);
-        return;
-    }
-
     freeListUtil(head->children);
     free(head);
 }
@@ -312,13 +311,13 @@ void freeListUtil(LinkedList* list){
         return;
     }
 
-    LinkedList* prev = NULL;
     while(list != NULL){
         freeTreeUtil(list->node);
-        prev = list;
-        list = list->next;
+        LinkedList* next = list->next;
 
-        free(prev);
+        free(list);
+
+        list = next;
     }
 }
 

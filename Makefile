@@ -24,26 +24,26 @@ test1:
 	diff ./output.txt ./testcases/expected/output_1.txt
 
 test2:
-	a1 ./testcases/input/testcase_2.txt
+	./a1 ./testcases/input/testcase_2.txt
 	diff ./output.txt ./testcases/expected/output_2.txt
 
 test3:
-	a1 ./testcases/input/testcase_3.txt
+	./a1 ./testcases/input/testcase_3.txt
 	diff ./output.txt ./testcases/expected/output_3.txt
 
 test4:
-	a1 ./testcases/input/testcase_4.txt
+	./a1 ./testcases/input/testcase_4.txt
 	diff ./output.txt ./testcases/expected/output_4.txt
 
 test5:
-	a1 ./testcases/input/testcase_5.txt
+	./a1 ./testcases/input/testcase_5.txt
 	diff ./output.txt ./testcases/expected/output_5.txt
 
 test6:
-	a1 ./testcases/input/testcase_6.txt
+	./a1 ./testcases/input/testcase_6.txt
 
 test7:
-	a1 ./testcases/input/testcase_7.txt
+	./a1 ./testcases/input/testcase_7.txt
 
 leak0:
 	valgrind ./a1 ./testcases/input/testcase_0.txt
