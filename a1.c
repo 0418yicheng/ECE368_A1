@@ -251,9 +251,8 @@ void processOutput(FILE* outputFile, TreeNode* head){
                 childrenInLayer--;
 
                 LinkedList* children = node->children;
-                LinkedList* minChild = findMin(children);
-                sortList(children);
-                children = minChild;
+                children = sort2(children);
+                node->children = children;;
 
                 if(children == NULL){
                     push(q, POUND, NULL);
