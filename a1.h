@@ -19,19 +19,23 @@ typedef struct TreeNode {
 } TreeNode;
 
 LinkedList* createTree(FILE*, LinkedList*);
+void processOutput(TreeNode*);
+LinkedList* findHead2(LinkedList*);
+
 TreeNode* createNode(char);
 LinkedList* addList(LinkedList*, TreeNode*);
 bool contains(LinkedList*, TreeNode*);
-void processOutput(FILE*, TreeNode*);
+
+bool cycleDetection(LinkedList*);
+bool cycleDetectionUtil(TreeNode*, LinkedList*);
+
 void freeTree(TreeNode*);
 void freeTreeUtil(TreeNode*);
 void freeListUtil(LinkedList*);
-LinkedList* findHead2(LinkedList*);
-LinkedList* delete(LinkedList*, LinkedList*);
-bool cycleDetection(LinkedList*);
-bool cycleDetectionUtil(TreeNode*, LinkedList*);
 void freeVisited(LinkedList*);
 void freeCycle(TreeNode*, LinkedList*);
 void freeListCycle(LinkedList*, LinkedList*);
+
+
 
 #endif

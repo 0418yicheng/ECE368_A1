@@ -1,68 +1,6 @@
 #include "sort.h"
 
-LinkedList* sort2(LinkedList* head){
-    if(head == NULL || head->next == NULL){
-        return head;
-    }
-    LinkedList* fast = head;
-    LinkedList* slow = head;
-    LinkedList* slowPrev = NULL;
-
-    while(fast != NULL && fast->next != NULL){
-        fast = fast->next->next;
-        slow = slow->next;
-        if(slowPrev != NULL) slowPrev = slowPrev->next;
-        else slowPrev = head;
-    }
-
-    LinkedList* left = head;
-    LinkedList* right = slow;
-    if(slowPrev != NULL) slowPrev->next = NULL;
-    // slow->next = NULL;
-
-    LinkedList* leftHead = findMin(left);
-    LinkedList* rightHead = findMin(right);
-    
-    sort2(left);
-    sort2(right);
-
-    return merge2(leftHead, rightHead);
-}
-
-LinkedList* merge2(LinkedList* left, LinkedList* right){
-    LinkedList* list = NULL;
-    
-    while(left != NULL || right != NULL){
-        if(left != NULL && (right == NULL || left->node->name < right->node->name)){
-            list = add(list, left);
-            left = left->next;
-        }
-        else if(right != NULL && (left == NULL || right->node->name < left->node->name)){
-            list = add(list, right);
-            right = right->next;
-        }
-    }
-
-    return list;
-}
-
-LinkedList* add(LinkedList* list, LinkedList* term){
-    if(list == NULL){
-        return term;
-    }
-
-    while(list->next != NULL){
-        list = list->next;
-    }
-
-    // LinkedList* next = term->next;
-    list->next = term;  //Also need to unlink the term.
-    term->next = NULL;
-
-    return list;
-}
-
-// Sorts a linkedlist using mergesort
+// Sorts a linkedlist using mergesort/qsort (I got confused, and I'm too lazy to change it)
 void sortList(LinkedList* head){
     if(head == NULL || head->next == NULL){
         return;
@@ -118,13 +56,6 @@ LinkedList* findTail(LinkedList* list){
     return list;
 }
 
-void insertHead(LinkedList* head, LinkedList* location){
-    if(head == location) return;
-    LinkedList* next = location->next;
-    location->next = head;
-    head->next = next;
-}
-
 // Prev is the node before curr, and we want to insert curr after location
 LinkedList* insert(LinkedList* curr, LinkedList* prev, LinkedList* location){
     if(prev == location){
@@ -140,7 +71,7 @@ LinkedList* insert(LinkedList* curr, LinkedList* prev, LinkedList* location){
     return next;
 }
 
-// Assumes the lists are already sorted, where left contains values less than pivot, and right contains values greater than pivot
+// Assumes the lists are already sorted (Qsort), where left contains values less than pivot, and right contains values greater than pivot
 LinkedList* mergeLists(LinkedList* left, LinkedList* right, LinkedList* pivot){
     if(left == NULL){
         pivot->next = right;

@@ -2,7 +2,6 @@
 #include "Queue.c"
 #include "sort.c"
 
-//TODO: valgrind to check memory leaks.
 int main(int argc, char** argv){
     if(argc < 2){
         printf("Not enough arguments\n");
@@ -15,7 +14,6 @@ int main(int argc, char** argv){
         return 0;
     }
 
-    //TODO: valgrind on test6 to check if this part works.
     LinkedList* nodes = NULL;
     nodes = createTree(file, nodes);
     if(nodes == NULL){
@@ -26,17 +24,13 @@ int main(int argc, char** argv){
         return 0;
     }
 
-    //Do cycle detection (Can make this more efficient, but I'm being lazy)
-    if(cycleDetection(nodes)){   //<--A lot of memory leaks here
-        //How to deal with memory leaks here?
+    //Do cycle detection
+    if(cycleDetection(nodes)){
         printf("INVALID\n");
         TreeNode* node = nodes->node;
-        //Free nodes list
-        freeVisited(nodes);
-        //Free the tree
-        freeCycle(node, NULL);
 
-        
+        freeVisited(nodes);
+        freeCycle(node, NULL);
 
         fclose(file);
         return 0;
@@ -47,36 +41,21 @@ int main(int argc, char** argv){
     freeVisited(nodes);
     LinkedList* h = heads;
 
-    FILE* outputFile = fopen("output.txt", "w");
     while(heads != NULL){
         LinkedList* next = heads->next;
-        processOutput(outputFile, heads->node);
+        processOutput(heads->node);
         freeTree(heads->node);
 
         if(heads->next != NULL){
             printf("\n");
-            fprintf(outputFile, "\n");
         }
         heads = next;
     }
 
     freeVisited(h);
-    fclose(outputFile);
     fclose(file);
     return 1;
 }
-
-/*
-    Given an input file, create a heirarchy similar to java inheritance
-    Characters next to each other are [Parent][Child]
-
-    1. Create a tree struct that can have any number of children
-        - Children is a linked list
-
-    Figure out invalid cases
-    Output siblings in alphabetical order
-    Figure out spacing for siblings in same layer but different parents
-*/
 
 // Given the input file, create the tree
 /*
@@ -206,33 +185,6 @@ LinkedList* findHead2(LinkedList* nodes){
     return heads;
 }
 
-//Delete node from nodes, and return the new head (in case the deleted one is the head)
-LinkedList* delete(LinkedList* nodes, LinkedList* node){
-    LinkedList* prev = NULL;
-    LinkedList* curr = nodes;
-
-    while(curr != NULL){
-        if(curr == node){
-            if(prev != NULL){
-                prev->next = curr->next;
-                free(curr);
-
-                return nodes;
-            }
-            else{   //Deleting from the head of the linked list
-                LinkedList* next = curr->next;
-                free(curr);
-                return next;
-            }
-        }
-
-        prev = curr;
-        curr = curr->next;
-    }
-
-    return nodes;
-}
-
 // Check if the linkedlsit contains a specified node
 bool contains(LinkedList* visited, TreeNode* node){
     while(visited != NULL){
@@ -245,7 +197,7 @@ bool contains(LinkedList* visited, TreeNode* node){
 }
 
 // Prints out the tree, formatted in teh required way into the output file
-void processOutput(FILE* outputFile, TreeNode* head){
+void processOutput(TreeNode* head){
     Queue* q = initQueue();
     
     push(q, NODE, head);
@@ -259,13 +211,10 @@ void processOutput(FILE* outputFile, TreeNode* head){
         Action a = pull(q);
         switch(a){
             case NODE:
-                fprintf(outputFile, "%c", node->name);
                 printf("%c", node->name);
                 childrenInLayer--;
 
                 LinkedList* children = node->children;
-                // children = sort2(children);
-                // node->children = children;;
                 LinkedList* minChild = findMin(children);
                 sortList(children);
                 children = minChild;
@@ -297,15 +246,12 @@ void processOutput(FILE* outputFile, TreeNode* head){
                 else push(q, SPACE, NULL);
                 break;
             case POUND:
-                fprintf(outputFile, "#");
                 printf("#");
                 break;
             case SPACE:
-                fprintf(outputFile, " ");
                 printf(" ");
                 break;
             case NEWLINE:
-                fprintf(outputFile, "\n");
                 printf("\n");
                 break;
         }
@@ -360,15 +306,12 @@ bool cycleDetection(LinkedList* list){
     return false;
 }
 
-//DFS through the tree
+//DFS through the tree while keeping track of a visited list
 bool cycleDetectionUtil(TreeNode* node, LinkedList* visited){
-    //TODO: Figure out memory management of this function
     if(node == NULL){
-        // freeVisited(visited);
         return false;
     }
     if(contains(visited, node)){
-        // freeVisited(visited);
         return true;
     }
 
@@ -411,7 +354,6 @@ bool cycleDetectionUtil(TreeNode* node, LinkedList* visited){
 
 void freeCycle(TreeNode* node, LinkedList* visited){
     if(contains(visited, node)){
-        // free(node);
         freeVisited(visited);
         return;
     }
@@ -434,6 +376,4 @@ void freeListCycle(LinkedList* list, LinkedList* visited){
         free(list);
         list = next;
     }
-
-    // free(head);
 }
