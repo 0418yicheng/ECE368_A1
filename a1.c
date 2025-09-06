@@ -21,6 +21,8 @@ int main(int argc, char** argv){
     if(nodes == NULL){
         printf("INVALID\n");
 
+        fclose(file);
+         
         return 0;
     }
 
@@ -34,7 +36,6 @@ int main(int argc, char** argv){
     // Find the heads of the trees so we can bfs
     LinkedList* heads = findHead2(nodes);
     freeVisited(nodes);
-    // LinkedList* heads = nodes;
     LinkedList* h = heads;
 
     FILE* outputFile = fopen("output.txt", "w");
@@ -103,11 +104,15 @@ LinkedList* createTree(FILE* file, LinkedList* nodes){
         if(childFound){
             if(child->hasParent){
                 LinkedList* heads = findHead2(nodes);
+                freeVisited(nodes);
+                LinkedList* h = heads;
                 while(heads != NULL){
                     LinkedList* next = heads->next;
                     freeTree(heads->node);
                     heads = next;
                 }
+                freeVisited(h);
+                
                 return NULL;
             }
         }
