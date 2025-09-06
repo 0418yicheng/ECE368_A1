@@ -31,5 +31,7 @@ LinkedList* delete(LinkedList*, LinkedList*);
 bool cycleDetection(LinkedList*);
 bool cycleDetectionUtil(TreeNode*, LinkedList*);
 void freeVisited(LinkedList*);
+void freeCycle(TreeNode*, LinkedList*);
+void freeListCycle(LinkedList*, LinkedList*);
 
 #endif

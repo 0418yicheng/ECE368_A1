@@ -27,11 +27,20 @@ int main(int argc, char** argv){
     }
 
     //Do cycle detection (Can make this more efficient, but I'm being lazy)
-    // if(cycleDetection(nodes)){   //<--A lot of memory leaks here
-    //     //How to deal with memory leaks here?
-    //     printf("INVALID\n");
-    //     return 0;
-    // }
+    if(cycleDetection(nodes)){   //<--A lot of memory leaks here
+        //How to deal with memory leaks here?
+        printf("INVALID\n");
+        TreeNode* node = nodes->node;
+        //Free nodes list
+        freeVisited(nodes);
+        //Free the tree
+        freeCycle(node, NULL);
+
+        
+
+        fclose(file);
+        return 0;
+    }
 
     // Find the heads of the trees so we can bfs
     LinkedList* heads = findHead2(nodes);
@@ -52,7 +61,6 @@ int main(int argc, char** argv){
     }
 
     freeVisited(h);
-    // freeVisited(nodes);
     fclose(outputFile);
     fclose(file);
     return 1;
@@ -256,8 +264,12 @@ void processOutput(FILE* outputFile, TreeNode* head){
                 childrenInLayer--;
 
                 LinkedList* children = node->children;
-                children = sort2(children);
-                node->children = children;;
+                // children = sort2(children);
+                // node->children = children;;
+                LinkedList* minChild = findMin(children);
+                sortList(children);
+                children = minChild;
+                node->children = children;
 
                 if(children == NULL){
                     push(q, POUND, NULL);
@@ -336,21 +348,12 @@ void freeVisited(LinkedList* visited){
 
 //Iterate through the list of nodes, and apply cycle detection to each
 bool cycleDetection(LinkedList* list){
-    int i = 0;
 
     while(list != NULL){
-        LinkedList* visited = NULL;
-
-        if(cycleDetectionUtil(list->node, visited)){
-            //Free the list
-            // freeVisited(visited);   //<-- The list isn't global, so visited should be null here.
+        if(cycleDetectionUtil(list->node, NULL)){
             return true;
         }
-
-        //TODO: free the list
-        freeVisited(visited);
         
-        i++;
         list = list->next;
     }
 
@@ -359,23 +362,78 @@ bool cycleDetection(LinkedList* list){
 
 //DFS through the tree
 bool cycleDetectionUtil(TreeNode* node, LinkedList* visited){
+    //TODO: Figure out memory management of this function
     if(node == NULL){
+        // freeVisited(visited);
         return false;
     }
     if(contains(visited, node)){
+        // freeVisited(visited);
         return true;
     }
 
-    visited = addList(visited, node);   //memory management of this?
+    visited = addList(visited, node);
 
     LinkedList* curr = node->children;
     while(curr != NULL){
-        if(cycleDetectionUtil(curr->node, visited)) return true;
+        if(cycleDetectionUtil(curr->node, visited)){
+            //Remove the node just added to the linkedlist
+            LinkedList* l = visited;
+            LinkedList* prev = NULL;
+            while(l->next != NULL){
+                l = l->next;
+                if(prev != NULL) prev = prev->next;
+                else prev = visited;
+            }
+
+            if(prev != NULL) prev->next = NULL;
+            free(l);
+            return true;
+        } 
         
         curr = curr->next;
     }
 
-    // freeVisited(visited);
+    //Remove the added visited node from the list:
+    LinkedList* l = visited;
+    LinkedList* prev = NULL;
+    while(l->next != NULL){
+        l = l->next;
+        if(prev != NULL) prev = prev->next;
+        else prev = visited;
+    }
+
+    if(prev != NULL) prev->next = NULL;
+    free(l);
 
     return false;
+}
+
+void freeCycle(TreeNode* node, LinkedList* visited){
+    if(contains(visited, node)){
+        // free(node);
+        freeVisited(visited);
+        return;
+    }
+
+    visited = addList(visited, node);
+
+    freeListCycle(node->children, visited);
+
+    free(node);
+}
+
+void freeListCycle(LinkedList* list, LinkedList* visited){
+    if(list == NULL){
+        return;
+    }
+
+    while(list != NULL){
+        LinkedList* next = list->next;
+        freeCycle(list->node, visited);
+        free(list);
+        list = next;
+    }
+
+    // free(head);
 }
